@@ -190,8 +190,8 @@ wave::wave(int chan, int sampler, int bitspersample){
   double sampleLimit = pow(2.0,(double)bitDepth);
   if(sampleLimit > 256)
     {
-      maxValue = (int)((sampleLimit/2)-1);
-      minValue = - maxValue;
+      maxValue = (int)((sampleLimit/2));
+      minValue = -(maxValue - 1);
     }
   else
     {
@@ -303,9 +303,12 @@ void wave::generateSine()
 
   tickOver = false;
   counter = 0;
+    maxValue = 15999;
+    minValue = -15999;
   cout<<maxValue<<" maxValue "<<endl;
   cout<<minValue<<" minValue "<<endl;
-  for (unsigned int i = 0; i < dataLength / byteDepth; i++)
+  int  dataSize = dataLength / byteDepth;
+  for (unsigned int i = 0; i < dataSize; i++)
     {
 
       temp = sin(rad * desiredFreq / sampleRate * counter);
@@ -316,11 +319,27 @@ void wave::generateSine()
       if(temp < minValue)
 	temp = minValue;
 
-      //      char tempArr[2];
-      //      *((int*)(&tempArr[0])) = (int)temp;
+      char tempArr[2];
+      *((short*)(&tempArr[0])) = (short)temp;
+      buffer.push_back(tempArr[0]);
+      buffer.push_back(tempArr[1]);
+      //      cout<<*((short*)(&buffer[i*2]))<<endl;
+      // fucking little endian shit.  
 
-      buffer.push_back((int)temp);
-
+      //      buffer.push_back((short)temp);
+      /*
+      cout<<"temp "<<temp<<endl;
+      cout<<tempArr[1]<<" - ";
+      cout<<tempArr[0]<<endl;
+      short temp2 = *((short*)(&tempArr[0]));
+      cout<<"temp2 "<<temp2<<endl;
+      char tempArr2[2];
+      tempArr2[1] = tempArr[0];
+      tempArr2[0] = tempArr[1];
+      cout<<*((short*)(&tempArr2[0]))<<endl;
+      cout<<endl;
+*/
+       
       //    desiredFreq += LFO;
        //       LFO+= .000001;
        //       if(LFO > .5)
@@ -367,8 +386,9 @@ void wave::writeW(string fileName)
 
   copy(header.begin(), header.end(), ostream_iterator<unsigned char>(fileOut));
   copy(dataHead.begin(), dataHead.end(), ostream_iterator<unsigned char>(fileOut));
+  //  copy(buffer.begin(), buffer.end(), ostream_iterator<unsigned char>(fileOut));
   copy(buffer.begin(), buffer.end(), ostream_iterator<unsigned char>(fileOut));
-  copy(infoBlock.begin(),infoBlock.end(), ostream_iterator<unsigned char>(fileOut));	 
+  copy(infoBlock.begin(),infoBlock.end(), ostream_iterator<unsigned char>(fileOut));
   fileOut.close();
 };
 
@@ -402,28 +422,35 @@ void wave::print()
   cout<<endl;
 }
 
-// Not much to see here, easiest wave form to generate.  
-// Looking at it now, there's probably an even easier way, 
-// I'll think about it.  
 void wave::generateSquare()
 {
   buffer.clear();
   tickOver = false;
-  for (unsigned int i = 0; i < dataLength; i++)
-    {
-      int flopper = (i % (int)fullPeriod);
-      if(flopper == 0)tickOver = !tickOver;
-      if(tickOver)
-	//	buffer.push_back(maxValue) ;
-	buffer.push_back(32766) ;
-      else 
-	//	buffer.push_back(minValue) ;
-	buffer.push_back(-32767) ;
-    }
+  char tempHigh[2] ;
+  *((short*)(&tempHigh[0])) = 15999;
+  char tempLow[2];
+  *((short*)(&tempLow[0])) = -15999;
+    for (unsigned int i = 0; i < dataLength/byteDepth; i++)
+      {
+	int flopper = (i % (int)fullPeriod);
+	if(flopper == 0)tickOver = !tickOver;
+	if(tickOver){
+	  buffer.push_back(tempHigh[1]);
+	  buffer.push_back(tempHigh[0]);
+	  //	  buffer.push_back(15999);
+	  //	  cout<<*((short*)(&tempHigh[0]))<<endl;
+	  //	  cout<<*((short*)(&buffer[i*2]))<<endl;
+	}
+	else {
+	  buffer.push_back(tempLow[1]);
+	  buffer.push_back(tempLow[0]);
+	  //	  buffer.push_back(-15999);
+	  //	  cout<<*((short*)(&tempLow[0]))<<endl;
+	  //	  cout<<*((short*)(&buffer[i*2]))<<endl;
+	}
+      }
 }
 
-// Pretty straight forward as far as what this function does. 
-// Maybe it could be improved, but I don't know how.  
 void wave::generateTriangle()
 {
   buffer.clear();

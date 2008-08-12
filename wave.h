@@ -58,12 +58,12 @@ class wave
   deque<char> header;
   deque<char> dataHead;
   deque<char> infoBlock;
-  deque<int> buffer;
+  deque<short> buffer;
 
  private:
   int counter;
   bool tickOver;
-  int maxValue, minValue;
+  short maxValue, minValue;
   unsigned int dataLength;
   float fullPeriod;
   unsigned int totalSize ;
