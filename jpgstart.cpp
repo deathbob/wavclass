@@ -129,10 +129,10 @@ int main()
   */
 
 
-  wave bob1(1,44100,16);
-  bob1.setDataLength(.5);
+  wave bob1(1, 44100, 16);
+  bob1.setDataLength(2);
 
-  bob1.setDesiredFreq(100);
+  bob1.setDesiredFreq(20);
 
   //    bob1.LFO = .001;
   //  bob1.generateTriSine();

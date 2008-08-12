@@ -58,7 +58,7 @@ class wave
   deque<char> header;
   deque<char> dataHead;
   deque<char> infoBlock;
-  deque<char> buffer;
+  deque<int> buffer;
 
  private:
   int counter;

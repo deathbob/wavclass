@@ -62,7 +62,7 @@ wave::wave()
                        // SampleRate * NumChannels * BitsPerSample/8
 
       2,0,	       // BlockAlign == NumChannels * BitsPerSample/8
-      16,0	       // oBitsPerSample, usually 8 or 16
+      16,0	       // BitsPerSample, usually 8 or 16
     };
 
 
@@ -134,7 +134,7 @@ wave::wave()
 };  // End of wave::wave(){};
 
 
-wave::wave(int chan, int sampler, int bitspers){
+wave::wave(int chan, int sampler, int bitspersample){
   char tempHeader[36] =
     {
       'R','I','F','F', // always RIFF // 0 - 3
@@ -167,9 +167,9 @@ wave::wave(int chan, int sampler, int bitspers){
 
   *((int*)(&tempHeader[22])) = chan;
   *((int*)(&tempHeader[24])) = sampler;
-  *((int*)(&tempHeader[28])) = chan*sampler*bitspers / 8;
-  *((int*)(&tempHeader[32])) = chan * bitspers / 8;
-  *((int*)(&tempHeader[34])) = bitspers;
+  *((int*)(&tempHeader[28])) = chan*sampler*bitspersample / 8;
+  *((int*)(&tempHeader[32])) = chan * bitspersample / 8;
+  *((int*)(&tempHeader[34])) = bitspersample;
   LFO = 0;
   totalSize = 0;
   dataLength = 0;
@@ -180,22 +180,22 @@ wave::wave(int chan, int sampler, int bitspers){
   compressionType = 1;
   channels = chan;
   sampleRate = sampler;
-  bytesPerSec = chan * sampler * bitspers / 8;
-  byteDepth = bitspers / 8;
-  bitDepth = bitspers;
+  bytesPerSec = chan * sampler * bitspersample / 8;
+  byteDepth = bitspersample / 8;
+  bitDepth = bitspersample;
 
   counter = 0;
   tickOver = 0;
 
-  double tempValue = pow(2.0,(double)bitDepth);
-  if(tempValue > 256)
+  double sampleLimit = pow(2.0,(double)bitDepth);
+  if(sampleLimit > 256)
     {
-      maxValue = (int)((tempValue/2)-1);
+      maxValue = (int)((sampleLimit/2)-1);
       minValue = - maxValue;
     }
   else
     {
-      maxValue = (int)tempValue;
+      maxValue = (int)sampleLimit;
       minValue = 0;
     }
 
@@ -296,64 +296,30 @@ void wave::generateSine()
   // clear the buffer or the data will get appended w/o 
   // updating the length of the data (dataLength).
   buffer.clear(); 
-  //  vector<float> sinLUT;
+
   float PI = 3.1415926535;
   float rad = 2 * PI;
   float temp = 0.0;
-  //  float pTemp = 0.0;
-
-  //  int radMax = (int)(rad * 10000);
-  //  sinLUT.reserve(radMax);
-  /*
-  for(int i = 0; i < radMax ; ++i)
-{
-  //  temp = (i * PI / 180);
-  pTemp = sin(i);
-  temp = pTemp;
-  sinLUT.push_back(temp);
-} 
-  */
 
   tickOver = false;
   counter = 0;
-  float  tempLFO = LFO;
-  float tempDesiredFreq = 0;
   cout<<maxValue<<" maxValue "<<endl;
   cout<<minValue<<" minValue "<<endl;
   for (unsigned int i = 0; i < dataLength / byteDepth; i++)
     {
 
-      /*
-      cout<<"*******"<<endl;
-      temp = (rad * desiredFreq / sampleRate * counter);
-      cout<<temp<<" temp "<<endl;
-      temp = temp * 10000;
-      pTemp = sinLUT[(int)temp];
-      cout<<pTemp<<" pTemp "<<endl;
-      */
-
       temp = sin(rad * desiredFreq / sampleRate * counter);
 
-      //      cout<<temp<<" temp "<<endl;
-      //      cout<<"*******"<<endl;
-
-
-      temp = temp * maxValue/2 ;      
+      temp = temp * maxValue ;      
       if (temp > maxValue)
 	temp = maxValue;
       if(temp < minValue)
 	temp = minValue;
 
-      //      cout<<temp<<" temp "<<endl;
+      //      char tempArr[2];
+      //      *((int*)(&tempArr[0])) = (int)temp;
 
-      char tempArr[2];
-      *((int*)(&tempArr[0])) = (int)temp;
-
-      buffer.push_back(tempArr[0]);
-      buffer.push_back(tempArr[1]);     
-
-
-      // int tempCheck = *((unsigned int*)(&tempArr[0]));
+      buffer.push_back((int)temp);
 
       //    desiredFreq += LFO;
        //       LFO+= .000001;
@@ -365,12 +331,8 @@ void wave::generateSine()
 	  counter = 0;
 	}
       counter++;
-  fullPeriod = (int)(0.5 + (sampleRate/desiredFreq));
+      // fullPeriod = (int)(0.5 + (sampleRate/desiredFreq));
     }
-  //  cout<<"LFO at end of Generate Sine "<<LFO<<endl;
-  //  cout<<"Desired Freq at end "<<desiredFreq<<endl;
-  LFO = tempLFO;
-  desiredFreq = tempDesiredFreq;
 
 };
 
@@ -383,7 +345,7 @@ void wave::setDesiredFreq(float freq)
 };
 
 // change the value of dataLength, and write that value
-// into the appropriate headers.  The value of "length" is the
+// into the appropriate h`eaders.  The value of "length" is the
 // length in seconds the noise generated should last.  
 void wave::setDataLength(float length)
 {
@@ -452,9 +414,11 @@ void wave::generateSquare()
       int flopper = (i % (int)fullPeriod);
       if(flopper == 0)tickOver = !tickOver;
       if(tickOver)
-	buffer.push_back(maxValue) ;
+	//	buffer.push_back(maxValue) ;
+	buffer.push_back(32766) ;
       else 
-	buffer.push_back(minValue) ;
+	//	buffer.push_back(minValue) ;
+	buffer.push_back(-32767) ;
     }
 }
 
