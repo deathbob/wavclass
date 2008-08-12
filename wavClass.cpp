@@ -303,8 +303,8 @@ void wave::generateSine()
 
   tickOver = false;
   counter = 0;
-    maxValue = 15999;
-    minValue = -15999;
+      maxValue =  32767;
+      minValue = -32767;
   cout<<maxValue<<" maxValue "<<endl;
   cout<<minValue<<" minValue "<<endl;
   int  dataSize = dataLength / byteDepth;
