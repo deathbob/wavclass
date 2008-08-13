@@ -190,8 +190,8 @@ wave::wave(int chan, int sampler, int bitspersample){
   double sampleLimit = pow(2.0,(double)bitDepth);
   if(sampleLimit > 256)
     {
-      maxValue = (int)((sampleLimit/2));
-      minValue = -(maxValue - 1);
+      maxValue = (int)((sampleLimit/2)-1);
+      minValue = -(maxValue);
     }
   else
     {
@@ -303,8 +303,8 @@ void wave::generateSine()
 
   tickOver = false;
   counter = 0;
-      maxValue =  32767;
-      minValue = -32767;
+  maxValue =  32767;
+  minValue = -32767;
   cout<<maxValue<<" maxValue "<<endl;
   cout<<minValue<<" minValue "<<endl;
   int  dataSize = dataLength / byteDepth;
@@ -427,23 +427,23 @@ void wave::generateSquare()
   buffer.clear();
   tickOver = false;
   char tempHigh[2] ;
-  *((short*)(&tempHigh[0])) = 15999;
+  *((short*)(&tempHigh[0])) = 32766;
   char tempLow[2];
-  *((short*)(&tempLow[0])) = -15999;
+  *((short*)(&tempLow[0])) = -32766;
     for (unsigned int i = 0; i < dataLength/byteDepth; i++)
       {
 	int flopper = (i % (int)fullPeriod);
 	if(flopper == 0)tickOver = !tickOver;
 	if(tickOver){
-	  buffer.push_back(tempHigh[1]);
 	  buffer.push_back(tempHigh[0]);
+	  buffer.push_back(tempHigh[1]);
 	  //	  buffer.push_back(15999);
 	  //	  cout<<*((short*)(&tempHigh[0]))<<endl;
 	  //	  cout<<*((short*)(&buffer[i*2]))<<endl;
 	}
 	else {
-	  buffer.push_back(tempLow[1]);
 	  buffer.push_back(tempLow[0]);
+	  buffer.push_back(tempLow[1]);
 	  //	  buffer.push_back(-15999);
 	  //	  cout<<*((short*)(&tempLow[0]))<<endl;
 	  //	  cout<<*((short*)(&buffer[i*2]))<<endl;
@@ -457,18 +457,28 @@ void wave::generateTriangle()
   tickOver = false;
   float temp = 0;
   counter = 0;
-  for(unsigned int i = 0; i < dataLength; i++)
+  char tempArr[2];
+  cout<<maxValue<<" "<<minValue<<endl;
+  for(unsigned int i = 0; i < dataLength / byteDepth; i++)
     {		
       temp = (float)counter/(float)fullPeriod;
-      temp = ((temp * maxValue));
+      temp = (temp * maxValue*2) + minValue ;
       // fullPeriod += LFO;
+      /* 
+	 if (temp > maxValue)
+	 temp = maxValue;
+	 if(temp < minValue)
+	 temp = minValue;
+      */
+      if(byteDepth == 1){
+	buffer.push_back((char)temp);	
+      }
+      if(byteDepth == 2){
+	*((short*)(&tempArr[0])) = (short)temp;
+	buffer.push_back(tempArr[0]);
+	buffer.push_back(tempArr[1]);
+      }
 
-      if (temp > maxValue)
-	temp = maxValue;
-      if(temp < minValue)
-	temp = minValue;
-
-      buffer.push_back((char)temp);	
       int flopper = (i % (int)fullPeriod);
       if (flopper == 0)
 	tickOver = !tickOver;

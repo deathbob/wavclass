@@ -77,13 +77,20 @@ int main()
 
   wave bob1(1, 44100, 16);
   bob1.setDataLength(1);
+bob1.setDesiredFreq(200);
+  bob1.generateSine();
 
-  bob1.setDesiredFreq(200);
+  wave bob2(1, 44100, 16);
+  bob2.setDataLength(1);
+  bob2.setDesiredFreq(10);
+  bob2.generateTriangle();
+  bob2.writeW("BobAug13-1.wav");
+
 
   //  bob1.LFO = .001;
   //  bob1.generateTriSine();
 
-  bob1.generateSine();
+
 
   //  bob1.play();
   string  fileName = "BobAug_12-1.wav";
