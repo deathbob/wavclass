@@ -47,14 +47,10 @@ class wave
   wave operator+(wave&);
   wave operator-(wave&);
   void reverseWav();
-  //shiftPhase - shift the starting point of the wav by a percentage of the 
-  //full period.  Take 1 - 100 input.  
   void shiftPhase(int percentToShift);
   void play();
 
   float LFO; //  should be less than 1, greater than 0
-  // Modifying desiredFreq by the addition of the LFO makes cool ring 
-  // modulated type noises.  
   deque<char> header;
   deque<char> dataHead;
   deque<char> infoBlock;
