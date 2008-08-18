@@ -330,6 +330,7 @@ void wave::generateSquare(){
   for (unsigned int i = 0; i < dataLength/byteDepth; i++){
     int flopper = (i % (int)fullPeriod);
     if(flopper == 0)tickOver = !tickOver;
+    for(int j = 0; j < channels; j++){
     if(tickOver){
       buffer.push_back(tempHigh[0]);
       buffer.push_back(tempHigh[1]);
@@ -338,7 +339,9 @@ void wave::generateSquare(){
       buffer.push_back(tempLow[0]);
       buffer.push_back(tempLow[1]);
     }
+    }
   }
+
 }
 
 void wave::generateTriangle(){

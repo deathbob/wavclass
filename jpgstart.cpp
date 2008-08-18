@@ -91,13 +91,23 @@ bob1.setDesiredFreq(200);
   //  bob1.LFO = .001;
   //  bob1.generateTriSine();
 
-
-
   //  bob1.play();
-  wave bob1("CDRip.wav");
-  string  fileName = "BobAug_15.wav";
-  bob1.writeW(fileName);
 
+	/*
+  wave bob1("dance.wav");
+  bob1.print();
+  string  fileName = "BobAug_18.wav";
+  bob1.writeW(fileName);
+	*/
+
+	wave stereo1(2, 44100, 16);
+	stereo1.setDataLength(1);
+	stereo1.setDesiredFreq(60);
+	stereo1.generateSquare();
+	stereo1.print();
+	stereo1.writeW("Stereo1.wav");
+
+	
 
 }
 	
