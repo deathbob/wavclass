@@ -17,6 +17,10 @@ larrick@gmail.com
     along with wavclass.  If not, see <http://www.gnu.org/licenses/>.
 
 ********/
+
+#ifndef BOBWAVE_H
+#define BOBWAVE_H
+
 #include <fstream>
 #include <iostream>
 #include <iomanip>
@@ -26,6 +30,9 @@ larrick@gmail.com
 #include <algorithm>
 #include <cmath>
 #include <deque>
+#include <map>
+#include "miniwave.h"
+
 
 using namespace std;
 
@@ -49,12 +56,13 @@ class wave
   void reverseWav();
   void shiftPhase(int percentToShift);
   void play();
-
+  void markovAte();
   float LFO; //  should be less than 1, greater than 0
   deque<char> header;
   deque<char> dataHead;
   deque<char> infoBlock;
   deque<short> buffer;
+  map<string, miniwave<short> > markov;
 
  private:
   int counter;
@@ -74,3 +82,4 @@ class wave
 
 };
 
+#endif

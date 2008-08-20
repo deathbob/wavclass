@@ -18,6 +18,7 @@
 
 */
 
+
 #include "wave.h"
 #include <algorithm>
 #include <sstream>
@@ -317,7 +318,14 @@ void wave::print(){
   for (int i = 0; i < 12; i++)    {
     cout<<setw(7)<<infoBlock[i]<<setw(7)<<(int)infoBlock[i]<<endl;
   }
-  cout<<endl;
+
+  cout<<"contents of markov"<<endl;
+  map<string, miniwave<short> >::iterator it = markov.begin();
+  for(it;it!= markov.end();it++){
+	  cout<<it->first;
+  }
+  cout<<endl;  
+
 }
 
 void wave::generateSquare(){
@@ -515,3 +523,31 @@ void wave::play(){
   status = write(fd, buf, buffer.size());
   status = close(fd);
 }
+
+void wave::markovAte(){
+	int previousSample = 0;
+	bool negative = false;
+	int i = 0;
+	while(i < buffer.size()){
+		miniwave<short> *mw = new miniwave<short>;
+		if(negative){
+			while(buffer[i] < 0){
+				mw->addSample(buffer[i]);
+				++i;
+			}
+		}
+		else{
+			while(buffer[i] > 0){
+				mw->addSample(buffer[i]);
+				++i;
+			}
+		}
+		if(!(markov.end() == markov.find(mw->name()) )  ){
+			markov[mw->name()] = *mw;
+		}
+		delete mw;
+	}
+		
+
+}//end of markovAte
+
