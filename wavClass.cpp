@@ -320,10 +320,12 @@ void wave::print(){
   }
 
   cout<<"contents of markov"<<endl;
-  map<string, miniwave<short> >::iterator it = markov.begin();
+  map<string, vector<miniwave<short> > >::iterator it = markov.begin();
   for(it;it!= markov.end();it++){
-	  cout<<it->first;
+	  cout<<it->first<<endl;
+	  cout<<it->second.size()<<endl;
   }
+  cout<<markov.size();
   cout<<endl;  
 
 }
@@ -528,26 +530,40 @@ void wave::markovAte(){
 	int previousSample = 0;
 	bool negative = false;
 	int i = 0;
-	while(i < buffer.size()){
+	char temp1[2];
+	short tempTogether = 1;
+	short prevTempTogether = 0;
+	int bufferSize = buffer.size();
+	while(i < bufferSize){
 		miniwave<short> *mw = new miniwave<short>;
 		if(negative){
-			while(buffer[i] < 0){
-				mw->addSample(buffer[i]);
+			while((tempTogether <= 0)&&(i<bufferSize)){
+				temp1[0] = buffer[i];
 				++i;
+				temp1[1] = buffer[i];
+				++i;
+				tempTogether = *((short*)(&temp1[0]));
+				mw->addSample(tempTogether);
 			}
+			negative = false;
 		}
 		else{
-			while(buffer[i] > 0){
-				mw->addSample(buffer[i]);
+			while((tempTogether >= 0) && (i < bufferSize)){
+				temp1[0] = buffer[i];
 				++i;
+				temp1[1] = buffer[i];
+				++i;
+				tempTogether = *((short*)(&temp1[0]));
+				mw->addSample(tempTogether);
 			}
+			negative = true;
 		}
-		if(!(markov.end() == markov.find(mw->name()) )  ){
-			markov[mw->name()] = *mw;
-		}
-		delete mw;
+	markov[mw->name()].push_back(*mw);
+	delete mw;
 	}
-		
-
 }//end of markovAte
 
+// note to self
+// change it so that the numbers are stored in teh buffer
+// in their natural state, change them to chars
+// when writing out.  Save a lot of this dickery.

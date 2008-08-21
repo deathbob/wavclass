@@ -103,15 +103,14 @@ bob1.setDesiredFreq(200);
   bob1.writeW(fileName);
 	*/
 
-	wave stereo1(2, 44100, 16);
+	wave stereo1(1, 44100, 16);
 	stereo1.setDataLength(1);
-	stereo1.setDesiredFreq(60);
+	stereo1.setDesiredFreq(868);
 	stereo1.generateSquare();
-	stereo1.markovAte();
-	stereo1.print();
-	stereo1.writeW("Stereo1.wav");
 
-	
+	stereo1.writeW("Stereo1.wav");
+	stereo1.markovAte();
+	stereo1.print();	
 
 }
 	

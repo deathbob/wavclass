@@ -21,6 +21,9 @@ class miniwave
     nameStream.clear();
     nameStream << right.nameStream.str();
   }
+
+  //  miniwave operator+(miniwave const& right){
+  //    vector<T>::iterator it = right.samples.begin();
     
   void addSample(const T& sampleToAdd){
     samples.push_back(sampleToAdd);

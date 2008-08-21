@@ -62,7 +62,7 @@ class wave
   deque<char> dataHead;
   deque<char> infoBlock;
   deque<short> buffer;
-  map<string, miniwave<short> > markov;
+  map<string, vector<miniwave<short> > > markov;
 
  private:
   int counter;
