@@ -294,7 +294,7 @@ void wave::writeW(string fileName){
   fileOut.open(fileName.c_str(), ios::out | ios::binary);
   copy(header.begin(), header.end(), ostream_iterator<unsigned char>(fileOut));
   copy(dataHead.begin(), dataHead.end(), ostream_iterator<unsigned char>(fileOut));
-  copy(buffer.begin(), buffer.end(), ostream_iterator<unsigned char>(fileOut));
+    copy(buffer.begin(), buffer.end(), ostream_iterator<unsigned char>(fileOut));
   copy(infoBlock.begin(),infoBlock.end(), ostream_iterator<unsigned char>(fileOut));
   fileOut.close();
 };
@@ -320,10 +320,12 @@ void wave::print(){
   }
 
   cout<<"contents of markov"<<endl;
-  map<string, vector<miniwave<short> > >::iterator it = markov.begin();
+  map<long, vector<miniwave<short> > >::iterator it = markov.begin();
   for(it;it!= markov.end();it++){
-	  cout<<it->first<<endl;
-	  cout<<it->second.size()<<endl;
+	  if(it->second.size() > 3){
+		  cout<<"it->first "<<it->first<<endl;
+		  cout<<"it->second "<<it->second.size()<<endl;
+	  }
   }
   cout<<markov.size();
   cout<<endl;  
@@ -331,26 +333,26 @@ void wave::print(){
 }
 
 void wave::generateSquare(){
-  buffer.clear();
-  tickOver = false;
-  char tempHigh[2] ;
-  *((short*)(&tempHigh[0])) = 32766;
-  char tempLow[2];
-  *((short*)(&tempLow[0])) = -32766;
-  for (unsigned int i = 0; i < dataLength/byteDepth; i++){
-    int flopper = (i % (int)fullPeriod);
-    if(flopper == 0)tickOver = !tickOver;
-    for(int j = 0; j < channels; j++){
-    if(tickOver){
-      buffer.push_back(tempHigh[0]);
-      buffer.push_back(tempHigh[1]);
-    }
-    else {
-      buffer.push_back(tempLow[0]);
-      buffer.push_back(tempLow[1]);
-    }
-    }
-  }
+	buffer.clear();
+	tickOver = false;
+	char tempHigh[2] ;
+	*((short*)(&tempHigh[0])) = 32766;
+	char tempLow[2];
+	*((short*)(&tempLow[0])) = -32766;
+	for (unsigned int i = 0; i < dataLength/byteDepth; i++){
+		int flopper = (i % (int)fullPeriod);
+		if(flopper == 0)tickOver = !tickOver;
+		for(int j = 0; j < channels; j++){
+			if(tickOver){
+				buffer.push_back(tempHigh[0]);
+				buffer.push_back(tempHigh[1]);
+			}
+			else {
+				buffer.push_back(tempLow[0]);
+				buffer.push_back(tempLow[1]);
+			}
+		}
+	}
 
 }
 
@@ -531,34 +533,39 @@ void wave::markovAte(){
 	bool negative = false;
 	int i = 0;
 	char temp1[2];
-	short tempTogether = 1;
-	short prevTempTogether = 0;
+	short tempTogether = 0;
+	short prevTempTogether ;
 	int bufferSize = buffer.size();
 	while(i < bufferSize){
 		miniwave<short> *mw = new miniwave<short>;
 		if(negative){
+			temp1[0] = buffer[i];
+			++i;
+			temp1[1] = buffer[i];
+			++i;
+			tempTogether = *((short*)(&temp1[0]));
 			while((tempTogether <= 0)&&(i<bufferSize)){
+				mw->addSample(tempTogether);
 				temp1[0] = buffer[i];
 				++i;
 				temp1[1] = buffer[i];
 				++i;
 				tempTogether = *((short*)(&temp1[0]));
-				mw->addSample(tempTogether);
 			}
 			negative = false;
 		}
 		else{
 			while((tempTogether >= 0) && (i < bufferSize)){
+				mw->addSample(tempTogether);
 				temp1[0] = buffer[i];
 				++i;
 				temp1[1] = buffer[i];
 				++i;
 				tempTogether = *((short*)(&temp1[0]));
-				mw->addSample(tempTogether);
 			}
 			negative = true;
 		}
-	markov[mw->name()].push_back(*mw);
+	markov[mw->identify()].push_back(*mw);
 	delete mw;
 	}
 }//end of markovAte
@@ -567,3 +574,9 @@ void wave::markovAte(){
 // change it so that the numbers are stored in teh buffer
 // in their natural state, change them to chars
 // when writing out.  Save a lot of this dickery.
+void wave::scramble(){
+	buffer.clear();
+	for (unsigned int i = 0; i < dataLength/byteDepth; i++){
+		
+	}		
+}// end of scramble

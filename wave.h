@@ -57,13 +57,15 @@ class wave
   void shiftPhase(int percentToShift);
   void play();
   void markovAte();
+  void scramble();
   float LFO; //  should be less than 1, greater than 0
   deque<char> header;
   deque<char> dataHead;
   deque<char> infoBlock;
-  deque<short> buffer;
-  map<string, vector<miniwave<short> > > markov;
-
+    deque<unsigned char> buffer;
+    //  deque<short> buffer;
+  map<long, vector<miniwave<short> > > markov;
+  
  private:
   int counter;
   bool tickOver;

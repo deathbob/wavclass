@@ -11,10 +11,14 @@ template<class T>
 class miniwave
 {
  public:
-  miniwave(){};
+  miniwave(){identifier = 0;};
   miniwave(miniwave const& copy ){
     nameStream << copy.nameStream.str();
     samples = copy.samples;
+    identifier = copy.identifier;
+    // the internet has 1000 dark corners, niches.
+    // 5 or 6 wide open places.
+    // Confederate flag buyers.  
   }
   miniwave operator=(miniwave const& right){
     samples = right.samples;
@@ -22,20 +26,22 @@ class miniwave
     nameStream << right.nameStream.str();
   }
 
-  //  miniwave operator+(miniwave const& right){
-  //    vector<T>::iterator it = right.samples.begin();
-    
   void addSample(const T& sampleToAdd){
     samples.push_back(sampleToAdd);
-    nameStream << sampleToAdd;
+    nameStream << sampleToAdd % 255;
+    identifier += sampleToAdd % 64;
   };
   string name(){
     return nameStream.str();
   }; 
+  long identify(){
+    return identifier;
+  };
 
  private:
   vector<T> samples;
   ostringstream nameStream; 
+  long identifier;
 };
 
 

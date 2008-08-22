@@ -95,22 +95,23 @@ bob1.setDesiredFreq(200);
   //  bob1.generateTriSine();
 
   //  bob1.play();
-
 	/*
-  wave bob1("dance.wav");
-  bob1.print();
-  string  fileName = "BobAug_18.wav";
-  bob1.writeW(fileName);
+	cout<<sizeof(short);
+	cout<<endl;
+	cout<<sizeof(char);
+	cout<<endl;
+	// channels, sample rate, bit depth
+	wave mono2(1, 44100, 16);
+	mono2.setDataLength(1);
+	mono2.setDesiredFreq(864);
+	mono2.generateSquare();
+	mono2.writeW("ShortSquare");
 	*/
 
-	wave stereo1(1, 44100, 16);
-	stereo1.setDataLength(1);
-	stereo1.setDesiredFreq(868);
-	stereo1.generateSquare();
-
-	stereo1.writeW("Stereo1.wav");
-	stereo1.markovAte();
-	stereo1.print();	
+	wave mono1("guitMono.wav");
+	mono1.writeW("Mono1.wav");
+	mono1.markovAte();
+	mono1.print();
 
 }
 	
