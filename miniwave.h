@@ -11,11 +11,15 @@ template<class T>
 class miniwave
 {
  public:
-  miniwave(){identifier = 0;};
+  miniwave(){
+    identifier = 0;
+    predecessor = "";
+};
   miniwave(miniwave const& copy ){
     nameStream << copy.nameStream.str();
     samples = copy.samples;
     identifier = copy.identifier;
+    predecessor = copy.predecessor;
     // the internet has 1000 dark corners, niches.
     // 5 or 6 wide open places.
     // Confederate flag buyers.  
@@ -24,12 +28,12 @@ class miniwave
     samples = right.samples;
     nameStream.clear();
     nameStream << right.nameStream.str();
+    predecessor = right.predecessor;
   }
-
   void addSample(const T& sampleToAdd){
     samples.push_back(sampleToAdd);
-    nameStream << sampleToAdd % 255;
-    identifier += sampleToAdd % 64;
+    nameStream << (sampleToAdd % 255);
+    identifier += (sampleToAdd % 64);
   };
   string name(){
     return nameStream.str();
@@ -37,11 +41,17 @@ class miniwave
   long identify(){
     return identifier;
   };
-
+  string getPredecessor(){
+    return predecessor;
+  };
+  string setPredecessor(string s){
+    predecessor = s;
+  };
  private:
   vector<T> samples;
   ostringstream nameStream; 
   long identifier;
+  string predecessor;
 };
 
 

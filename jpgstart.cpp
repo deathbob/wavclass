@@ -109,8 +109,9 @@ bob1.setDesiredFreq(200);
 	*/
 
 	wave mono1("guitMono.wav");
-	mono1.writeW("Mono1.wav");
+	//	mono1.writeW("Mono1.wav");
 	mono1.markovAte();
+	mono1.scramble();
 	mono1.print();
 
 }

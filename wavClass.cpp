@@ -18,7 +18,7 @@
 
 */
 
-
+//#include <cstdlib>
 #include "wave.h"
 #include <algorithm>
 #include <sstream>
@@ -320,14 +320,14 @@ void wave::print(){
   }
 
   cout<<"contents of markov"<<endl;
-  map<long, vector<miniwave<short> > >::iterator it = markov.begin();
+  map<string, vector<miniwave<short> > >::iterator it = markov.begin();
   for(it;it!= markov.end();it++){
 	  if(it->second.size() > 3){
-		  cout<<"it->first "<<it->first<<endl;
-		  cout<<"it->second "<<it->second.size()<<endl;
+		  cout<<"it->first |"<<it->first<<"|"<<endl;
+		  cout<<"it->second |"<<it->second.size()<<"|"<<endl;
 	  }
   }
-  cout<<markov.size();
+  cout<<"total number of unique slices |"<<markov.size()<<"|";
   cout<<endl;  
 
 }
@@ -534,10 +534,12 @@ void wave::markovAte(){
 	int i = 0;
 	char temp1[2];
 	short tempTogether = 0;
-	short prevTempTogether ;
+	//	string prevTempTogether;
+	string prevMW = "none";
 	int bufferSize = buffer.size();
 	while(i < bufferSize){
 		miniwave<short> *mw = new miniwave<short>;
+		//		mw->setPredecessor(prevMW);
 		if(negative){
 			temp1[0] = buffer[i];
 			++i;
@@ -555,6 +557,11 @@ void wave::markovAte(){
 			negative = false;
 		}
 		else{
+			temp1[0] = buffer[i];
+			++i;
+			temp1[1] = buffer[i];
+			++i;
+			tempTogether = *((short*)(&temp1[0]));
 			while((tempTogether >= 0) && (i < bufferSize)){
 				mw->addSample(tempTogether);
 				temp1[0] = buffer[i];
@@ -565,7 +572,8 @@ void wave::markovAte(){
 			}
 			negative = true;
 		}
-	markov[mw->identify()].push_back(*mw);
+	markov[mw->name()].push_back(*mw);
+	prevMW = mw->name();
 	delete mw;
 	}
 }//end of markovAte
@@ -574,8 +582,16 @@ void wave::markovAte(){
 // change it so that the numbers are stored in teh buffer
 // in their natural state, change them to chars
 // when writing out.  Save a lot of this dickery.
+
+
 void wave::scramble(){
 	buffer.clear();
+	map<string, vector<miniwave<short> > >::iterator it = markov.begin();
+	int secondSize = it->second.size();
+	cout<<secondSize<<endl;
+	int seed = rand() % secondSize;
+	string temp = it->second[seed].getPredecessor();
+	cout<<temp<<endl;
 	for (unsigned int i = 0; i < dataLength/byteDepth; i++){
 		
 	}		

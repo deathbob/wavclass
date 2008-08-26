@@ -62,9 +62,11 @@ class wave
   deque<char> header;
   deque<char> dataHead;
   deque<char> infoBlock;
-    deque<unsigned char> buffer;
+  deque<unsigned char> buffer;
     //  deque<short> buffer;
-  map<long, vector<miniwave<short> > > markov;
+  // list pros and cons of using a string or a long as the key
+  //
+  map<string, vector<miniwave<short> > > markov;
   
  private:
   int counter;
