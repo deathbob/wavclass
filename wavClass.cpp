@@ -320,7 +320,7 @@ void wave::print(){
   }
 
   cout<<"contents of markov"<<endl;
-  map<string, vector<miniwave<short> > >::iterator it = markov.begin();
+  map<long, vector<miniwave<short> > >::iterator it = markov.begin();
   for(it;it!= markov.end();it++){
 	  if(it->second.size() > 3){
 		  cout<<"it->first |"<<it->first<<"|"<<endl;
@@ -535,11 +535,10 @@ void wave::markovAte(){
 	char temp1[2];
 	short tempTogether = 0;
 	//	string prevTempTogether;
-	string prevMW = "none";
+	long prevMW = 0;
 	int bufferSize = buffer.size();
 	while(i < bufferSize){
 		miniwave<short> *mw = new miniwave<short>;
-
 		if(negative){
 			temp1[0] = buffer[i];
 			++i;
@@ -572,9 +571,11 @@ void wave::markovAte(){
 			}
 			negative = true;
 		}
-	markov[mw->name()].push_back(*mw);
+	markov[mw->identify()].push_back(*mw);
 	mw->setPredecessor(prevMW);
-	prevMW = mw->name();
+	vector<miniwave>* vec = markov[prevMW].find(//
+	prevMW = mw->identify();
+	
 	delete mw;
 	}
 }//end of markovAte
@@ -587,11 +588,11 @@ void wave::markovAte(){
 
 void wave::scramble(){
 	buffer.clear();
-	map<string, vector<miniwave<short> > >::iterator it = markov.begin();
+	map<long, vector<miniwave<short> > >::iterator it = markov.begin();
 	int secondSize = it->second.size();
 	cout<<secondSize<<endl;
 	int seed = rand() % secondSize;
-	string temp = it->second[seed].getPredecessor();
+	long temp = it->second[seed].getPredecessor();
 	cout<<temp<<endl;
 	for (unsigned int i = 0; i < dataLength/byteDepth; i++){
 		

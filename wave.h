@@ -66,7 +66,7 @@ class wave
     //  deque<short> buffer;
   // list pros and cons of using a string or a long as the key
   //
-  map<string, vector<miniwave<short> > > markov;
+  map<long, vector<miniwave<short> > > markov;
   
  private:
   int counter;

@@ -3,6 +3,7 @@
 
 #include <string>
 #include <iostream>
+#include <iomanip>
 #include <sstream>
 
 using namespace std;
@@ -13,42 +14,56 @@ class miniwave
  public:
   miniwave(){
     identifier = 0;
-    predecessor = "";
+    predecessor = 0;
+    followedBy = 0;
 };
   miniwave(miniwave const& copy ){
-    nameStream << copy.nameStream.str();
+    //    nameStream << copy.nameStream.str();
     samples = copy.samples;
     identifier = copy.identifier;
     predecessor = copy.predecessor;
+    followedBy = copy.followedBy;
   }
   miniwave operator=(miniwave const& right){
     samples = right.samples;
-    nameStream.clear();
-    nameStream << right.nameStream.str();
+    //    nameStream.clear();
+    //    nameStream << right.nameStream.str();
     predecessor = right.predecessor;
+    identifier = right.identifier;
+    followedBy = right.followedBy;
   }
   void addSample(const T& sampleToAdd){
     samples.push_back(sampleToAdd);
-    nameStream << (sampleToAdd % 255);
-    identifier += (sampleToAdd % 64);
+    //    nameStream << (sampleToAdd % 2);
+    identifier += (sampleToAdd % 100);
   };
+/********
   string name(){
-    return nameStream.str();
+    string temp = nameStream.str(); 
+    return temp;
   }; 
+*/
   long identify(){
     return identifier;
   };
-  string getPredecessor(){
+  long getPredecessor(){
     return predecessor;
   };
-  string setPredecessor(const string& s){
+  long setPredecessor(const long& s){
     predecessor = s;
   };
+  long getFollowedBy(){
+    return followedBy;
+  }
+  long setFollowedBy(const long& l){
+    followedBy  = l;
+  }
  private:
   vector<T> samples;
-  ostringstream nameStream; 
+  //  stringstream nameStream; 
   long identifier;
-  string predecessor;
+  long predecessor;
+  long followedBy;
 };
 
 
