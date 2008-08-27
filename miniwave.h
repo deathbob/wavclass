@@ -20,9 +20,6 @@ class miniwave
     samples = copy.samples;
     identifier = copy.identifier;
     predecessor = copy.predecessor;
-    // the internet has 1000 dark corners, niches.
-    // 5 or 6 wide open places.
-    // Confederate flag buyers.  
   }
   miniwave operator=(miniwave const& right){
     samples = right.samples;
@@ -44,7 +41,7 @@ class miniwave
   string getPredecessor(){
     return predecessor;
   };
-  string setPredecessor(string s){
+  string setPredecessor(const string& s){
     predecessor = s;
   };
  private:

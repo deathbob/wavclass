@@ -539,7 +539,7 @@ void wave::markovAte(){
 	int bufferSize = buffer.size();
 	while(i < bufferSize){
 		miniwave<short> *mw = new miniwave<short>;
-		//		mw->setPredecessor(prevMW);
+
 		if(negative){
 			temp1[0] = buffer[i];
 			++i;
@@ -573,6 +573,7 @@ void wave::markovAte(){
 			negative = true;
 		}
 	markov[mw->name()].push_back(*mw);
+	mw->setPredecessor(prevMW);
 	prevMW = mw->name();
 	delete mw;
 	}
