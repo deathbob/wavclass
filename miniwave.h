@@ -16,14 +16,14 @@ class miniwave
     identifier = 0;
     predecessor = 0;
     followedBy = 0;
-};
+  };
   miniwave(miniwave const& copy ){
     //    nameStream << copy.nameStream.str();
     samples = copy.samples;
     identifier = copy.identifier;
     predecessor = copy.predecessor;
     followedBy = copy.followedBy;
-  }
+  };
   miniwave operator=(miniwave const& right){
     samples = right.samples;
     //    nameStream.clear();
@@ -31,7 +31,11 @@ class miniwave
     predecessor = right.predecessor;
     identifier = right.identifier;
     followedBy = right.followedBy;
-  }
+  };
+  bool operator==(miniwave const& right){
+    if (identifier == right.identifier) return true;
+    else return false;
+  };
   void addSample(const T& sampleToAdd){
     samples.push_back(sampleToAdd);
     //    nameStream << (sampleToAdd % 2);
