@@ -4,7 +4,7 @@
 #include <string>
 #include <iostream>
 #include <iomanip>
-#include <sstream>
+
 
 using namespace std;
 
@@ -18,16 +18,17 @@ class miniwave
     followedBy = 0;
   };
   miniwave(miniwave const& copy ){
-    //    nameStream << copy.nameStream.str();
-    samples = copy.samples;
+
+    for(int i = 0; i < copy.samples.size(); i++){
+      samples.push_back(copy.samples[i]);
+    }
+    //    samples = copy.samples;
     identifier = copy.identifier;
     predecessor = copy.predecessor;
     followedBy = copy.followedBy;
   };
   miniwave operator=(miniwave const& right){
     samples = right.samples;
-    //    nameStream.clear();
-    //    nameStream << right.nameStream.str();
     predecessor = right.predecessor;
     identifier = right.identifier;
     followedBy = right.followedBy;
@@ -36,17 +37,15 @@ class miniwave
     if (identifier == right.identifier) return true;
     else return false;
   };
+  ~miniwave(){
+    samples.clear();
+  };
+
   void addSample(const T& sampleToAdd){
     samples.push_back(sampleToAdd);
-    //    nameStream << (sampleToAdd % 2);
     identifier += (sampleToAdd % 100);
   };
-/********
-  string name(){
-    string temp = nameStream.str(); 
-    return temp;
-  }; 
-*/
+
   long identify(){
     return identifier;
   };
@@ -59,12 +58,11 @@ class miniwave
   long getFollowedBy(){
     return followedBy;
   }
-  long setFollowedBy(const long& l){
+  void setFollowedBy(const long& l){
     followedBy  = l;
   }
  private:
   vector<T> samples;
-  //  stringstream nameStream; 
   long identifier;
   long predecessor;
   long followedBy;

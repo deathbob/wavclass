@@ -529,57 +529,60 @@ void wave::play(){
 }
 
 void wave::markovAte(){
-	bool negative = false;
-	int i = 0;
-	char temp1[2];
-	short tempTogether = 0;
-	long prevMW = 0;
-	int bufferSize = buffer.size();
-	miniwave<short> holder;
-	while(i < bufferSize){
-		miniwave<short> *mw = new miniwave<short>;
-		if(negative){
-			temp1[0] = buffer[i];
-			++i;
-			temp1[1] = buffer[i];
-			++i;
-			tempTogether = *((short*)(&temp1[0]));
-			while((tempTogether <= 0)&&(i<bufferSize)){
-				mw->addSample(tempTogether);
-				temp1[0] = buffer[i];
-				++i;
-				temp1[1] = buffer[i];
-				++i;
-				tempTogether = *((short*)(&temp1[0]));
-			}
-			negative = false;
-		}
-		else{
-			temp1[0] = buffer[i];
-			++i;
-			temp1[1] = buffer[i];
-			++i;
-			tempTogether = *((short*)(&temp1[0]));
-			while((tempTogether >= 0) && (i < bufferSize)){
-				mw->addSample(tempTogether);
-				temp1[0] = buffer[i];
-				++i;
-				temp1[1] = buffer[i];
-				++i;
-				tempTogether = *((short*)(&temp1[0]));
-			}
-			negative = true;
-		}
-		markov[mw->identify()].push_back(*mw);
-		mw->setPredecessor(prevMW);
-		holder = *mw;
-		if(prevMW != 0){
-			vector<miniwave<short> >::iterator miniP = find(markov[prevMW].begin(), markov[prevMW].end(), holder);
-			miniP.setFollowedBy(mw->identify());
-		}
-		prevMW = mw->identify();
-		delete mw;
-	}
+     bool negative = false;
+     int i = 0;
+     char temp1[2];
+     short tempTogether = 0;
+     long prevMW = 0;
+     int bufferSize = buffer.size();
+     miniwave<short> holder;
+     while(i < bufferSize){
+	  miniwave<short> *mw = new miniwave<short>;
+	  if(negative){
+	       temp1[0] = buffer[i];
+	       ++i;
+	       temp1[1] = buffer[i];
+	       ++i;
+	       tempTogether = *((short*)(&temp1[0]));
+	       while((tempTogether <= 0)&&(i<bufferSize)){
+		    mw->addSample(tempTogether);
+		    temp1[0] = buffer[i];
+		    ++i;
+		    temp1[1] = buffer[i];
+		    ++i;
+		    tempTogether = *((short*)(&temp1[0]));
+	       }
+	       negative = false;
+	  }
+	  else{
+	       temp1[0] = buffer[i];
+	       ++i;
+	       temp1[1] = buffer[i];
+	       ++i;
+	       tempTogether = *((short*)(&temp1[0]));
+	       while((tempTogether >= 0) && (i < bufferSize)){
+		    mw->addSample(tempTogether);
+		    temp1[0] = buffer[i];
+		    ++i;
+		    temp1[1] = buffer[i];
+		    ++i;
+		    tempTogether = *((short*)(&temp1[0]));
+	       }
+	       negative = true;
+	  }
+	  markov[mw->identify()].push_back(*mw);
+	  mw->setPredecessor(prevMW);
+	  //		holder = *mw;
+	  if(prevMW != 0){
+	       vector<miniwave<short> >::iterator miniP = 
+		    find(markov[prevMW].begin(), markov[prevMW].end(), *mw);
+	       if(miniP != markov[prevMW].end()){
+		    miniP->setFollowedBy(mw->identify());
+	       }
+	  }
+	  prevMW = mw->identify();
+	  delete mw;
+     }
 }//end of markovAte
 
 // note to self
