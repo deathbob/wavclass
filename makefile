@@ -44,7 +44,7 @@
 # 
 #  Define special compilation flags for C++ compilation. These may change when
 #  we're done testing and debugging.
-CPPFLAGS=-g
+CPPFLAGS=-g -Wall
 #
 #  Define special compilation flags for C compilation. These may change when
 #  we're done testing and debugging.
@@ -52,7 +52,7 @@ CFLAGS=-g
 # 
 #  What is the name of the program you want to create?  (See below for notes
 #     on using this makefile to generate multiple programs.)
-TARGET=bobwav.exe
+TARGET=bobwave.exe
 #
 #  List the object code files to be produced by compilation. Normally this 
 #  list will include one ".o" file for each C++ file (with names ending in 
@@ -104,6 +104,9 @@ DEPENDENCIES = $(OBJS:.o=.d)
 # Targets:
 # 
 all: $(TARGET)
+
+test:
+	g++ -g test.cpp -o test
 
 $(TARGET): $(OBJS)
 	$(LINK) $(FLAGS) -o $(TARGET) $(OBJS) $(LFLAGS)

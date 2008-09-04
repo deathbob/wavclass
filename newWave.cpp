@@ -38,7 +38,6 @@ wave::wave(){
 	for (int i = 0; i < 12; i++){
 		infoBlock.push_back(tempInfoBlock[i]);
 	}
-	double tempValue = pow(2.0,(double)bitDepth);
 
 };  // End of wave::wave(){};
 
@@ -70,7 +69,7 @@ wave::wave(string fileName){
 		if(dataHead[0] == 'd' && dataHead[1] == 'a' && dataHead[2] == 't' && dataHead[3] == 'a')dataBlockFound = true;
 	}
 	dataLength = *((unsigned int*)(&dataHead[4]));
-	for(int i = 0; i < dataLength; ++i){
+	for(unsigned int i = 0; i < dataLength; ++i){
 		unsigned char temp = fileIn.get();
 		buffer.push_back(temp);
 	}
@@ -105,17 +104,17 @@ void wave::print(){
 	cout<<"buffer.size() "<<buffer.size()<<endl;
 
 	cout<<"contents of header \n"<<left;
-	for(int i = 0; i < header.size(); i++)    {
+	for(unsigned int i = 0; i < header.size(); i++)    {
 	     cout<<setw(7)<<header[i]<<setw(7)<<(int)header[i]<<endl;
 	}
 	//	copy(header.begin(), header.end(), ostream_iterator<unsigned char>(cout));
 
 	cout<<endl<<"contents of dataHead \n";
-	for(int i = 0; i < dataHead.size(); i++)    {
+	for(unsigned int i = 0; i < dataHead.size(); i++)    {
 		cout<<setw(7)<<dataHead[i]<<setw(7)<<(int)dataHead[i]<<endl;
 	}
 	cout<<endl<<"contents of infoBlock \n";
-	for (int i = 0; i < infoBlock.size(); i++)    {
+	for (unsigned int i = 0; i < infoBlock.size(); i++)    {
 		cout<<setw(7)<<infoBlock[i]<<setw(7)<<(int)infoBlock[i]<<endl;
 	}
 	/*
@@ -161,11 +160,12 @@ void wave::markovAte(){
 	  }
 	  miniwave<short>* mw = new miniwave<short>;
 
-	  for (int j = 0; j < temp.size();j++){
+	  for (unsigned int j = 0; j < temp.size();j++){
 	       mw->addSample(temp[j]);
 	  }
 	  mw->setPredecessor(prevMW);
 	  long death = mw->identify();
+	  miniwave<short> holder = *mw;
 	  markov[death] = *mw;
 	  if(prevMW != 0){
 	       markov[prevMW].setFollowedBy(mw->identify());
