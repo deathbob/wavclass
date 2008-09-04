@@ -12,6 +12,7 @@
 #include <deque>
 #include <map>
 #include "miniwave.h"
+#include "bobGraph.h"
 
 using namespace std;
 
@@ -32,8 +33,7 @@ class wave
   //  deque<short> buffer;
   // list pros and cons of using a string or a long as the key
   //
-  map<long, miniwave<short> > markov;
-  
+  map<long, vertex<short> > vertices;
  private:
   unsigned int dataLength;
   unsigned int totalSize ;

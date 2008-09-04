@@ -140,41 +140,27 @@ void wave::markovAte(){
      int bufferSize = buffer.size();
      vector<short> temp;
      while(i < bufferSize){
+	  miniwave<short>* mw = new miniwave<short>;
 	  if(negative){
-	       tempTogether = *((short*)(&buffer[i]));
 	       while((tempTogether <= 0)&&(i<bufferSize)){
-		    temp.push_back(tempTogether);
+		    mw->addSample(tempTogether);
 		    i+=2;
 		    tempTogether = *((short*)(&buffer[i]));
 	       }
 	       negative = false;
 	  }
 	  else{
-	       tempTogether = *((short*)(&buffer[i]));
 	       while((tempTogether >= 0) && (i < bufferSize)){
-		    temp.push_back(tempTogether);
+		    mw->addSample(tempTogether);
 		    i+=2;
 		    tempTogether = *((short*)(&buffer[i]));
 	       }
 	       negative = true;
 	  }
-	  miniwave<short>* mw = new miniwave<short>;
-
-	  for (unsigned int j = 0; j < temp.size();j++){
-	       mw->addSample(temp[j]);
-	  }
-	  mw->setPredecessor(prevMW);
-	  long death = mw->identify();
-	  miniwave<short> holder = *mw;
-	  markov[death] = *mw;
-	  if(prevMW != 0){
-	       markov[prevMW].setFollowedBy(mw->identify());
-	  }
-
+	  vertices[mw->identify()].addMW(*mw);
+	  vertices[prevMW].addEdge(mw->identify());
 	  prevMW = mw->identify();
-	  temp.clear();
 	  delete mw;
-	  cout<<i<<" "<<bufferSize<<endl;
      }
 }//end of markovAte
 
@@ -186,7 +172,7 @@ void wave::markovAte(){
 
 void wave::scramble(){
 	buffer.clear();
-	map<long, miniwave<short> >::iterator it = markov.begin();
+
 	for (unsigned int i = 0; i < dataLength/byteDepth; i++){
 		// code to build new buffer from markov chain goes here.  
 	}		
