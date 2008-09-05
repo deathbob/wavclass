@@ -22,6 +22,7 @@ class wave
   wave();
   wave(string fileName);
   void setDataLength(float length);
+  void setDataLength();
   void writeW(string fileName);
   void print();
   void markovAte();

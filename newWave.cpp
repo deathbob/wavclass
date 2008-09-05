@@ -1,6 +1,6 @@
 #include "newWave.h"
 #include <algorithm>
-
+#include <map>
 using namespace std;
 
 wave::wave(){
@@ -87,8 +87,20 @@ void wave::setDataLength(float length){
 	*((unsigned int*)(&dataHead[4])) = dataLength;
 };
 
+void wave::setDataLength(){
+     if(dataLength != buffer.size()){
+	  cout<<"dataLength was wrong!"<<endl;
+	  dataLength = buffer.size(); 
+	  *((unsigned int*)(&header[4])) = dataLength + header.size() + infoBlock.size();
+	  *((unsigned int*)(&dataHead[4])) = dataLength + header.size() + infoBlock.size();
+     }
+};
+	  
 
 void wave::writeW(string fileName){
+     if(dataLength != buffer.size()){
+	  setDataLength();
+     }
 	ofstream fileOut;
 	fileOut.open(fileName.c_str(), ios::out | ios::binary);
 	copy(header.begin(), header.end(), ostream_iterator<unsigned char>(fileOut));
@@ -117,18 +129,17 @@ void wave::print(){
 	for (unsigned int i = 0; i < infoBlock.size(); i++)    {
 		cout<<setw(7)<<infoBlock[i]<<setw(7)<<(int)infoBlock[i]<<endl;
 	}
-	/*
-	cout<<"contents of markov"<<endl;
-	map<long, vector<miniwave<short> > >::iterator it = markov.begin();
-	for(it;it!= markov.end();it++){
-		if(it->second.size() > 3){
-			cout<<"it->first "<<it->first<<endl;
-			cout<<"it->second.size() "<<it->second.size()<<endl;
-		}
+	cout<<"contents of vertices "<<endl;
+	map<long, vertex<short> >::iterator it;
+	for(it = vertices.begin();it != vertices.end();it++){
+	     //	     cout<<it->first<<" miniwaves  "<<it->second.miniwaves.size()<<endl;
+	     //	     cout<<"  edges   "<<it->second.edges.size()<<endl;
+	     if(it->second.edges.size() == 0){
+		  cout<<"Problem!  "<<it->first<<endl;
+		  //		  it->second.addEdge(0);
+
+	     }
 	}
-	cout<<"total number of unique slices |"<<markov.size()<<"|";
-	cout<<endl;
-	*/
 }
 
 
@@ -141,7 +152,8 @@ void wave::markovAte(){
      vector<short> temp;
      while(i < bufferSize){
 	  miniwave<short>* mw = new miniwave<short>;
-	  if(negative){
+	  //	  if(negative)
+{
 	       while((tempTogether <= 0)&&(i<bufferSize)){
 		    mw->addSample(tempTogether);
 		    i+=2;
@@ -149,7 +161,8 @@ void wave::markovAte(){
 	       }
 	       negative = false;
 	  }
-	  else{
+	  //	  else
+	       {
 	       while((tempTogether >= 0) && (i < bufferSize)){
 		    mw->addSample(tempTogether);
 		    i+=2;
@@ -171,9 +184,37 @@ void wave::markovAte(){
 
 
 void wave::scramble(){
-	buffer.clear();
+     buffer.clear();
+     unsigned int bufferPlace = 0;
+     map<long, vertex<short> >::iterator it = vertices.begin();
+     long seed = it->first;
 
-	for (unsigned int i = 0; i < dataLength/byteDepth; i++){
-		// code to build new buffer from markov chain goes here.  
-	}		
+     while(bufferPlace < (dataLength)){
+	  //	  int temp1 = vertices[seed].miniwaves.size();
+	  
+	  int temp1 = vertices[seed].miniwaves.size();
+	  int miniWaveSeed = rand() % temp1;
+	  unsigned int tempSamplesSize = vertices[seed].miniwaves[miniWaveSeed].samples.size();
+	  for(unsigned int j = 0;j < tempSamplesSize; j++){
+	       char tempArr[2];
+	       short tempSample = vertices[seed].miniwaves[miniWaveSeed].samples[j];
+	       *((short*)(&tempArr[0])) = tempSample;
+
+	       buffer.push_back(tempArr[0]);
+	       buffer.push_back(tempArr[1]);
+	       
+	       bufferPlace += 2;
+	  }
+	  long temp = rand() % vertices[seed].edges.size();
+	  seed = vertices[seed].edges[temp].to;
+	  
+	  //	  seed = vertices[rand(vertices[seed].edges.size())]
+     }
+     setDataLength();
+     /*
+      *((short*)(&tempArr[0])) = (short)temp;
+      buffer.push_back(tempArr[0]);
+      buffer.push_back(tempArr[1]);
+     */
+     // code to build new buffer from markov chain goes here.  
 }// end of scramble

@@ -39,13 +39,13 @@ class miniwave
   };
   void addSample(const T sampleToAdd){
     samples.push_back(sampleToAdd);
-    identifier += (sampleToAdd % 100);
+    identifier += (sampleToAdd % 128);
   };
   long identify(){
     return identifier;
   };
 
- private:
+  // private:
   vector<T> samples;
   long identifier;
 };
