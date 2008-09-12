@@ -144,36 +144,15 @@ void wave::print(){
 
 
 void wave::markovAte(){
-     bool negative = false;
      int i = 0;
-     short tempTogether = *((short*)(&buffer[i]));
-     long prevMW = 0;
+     short current = *((short*)(&buffer[i]));
+     long previous = 0;
      int bufferSize = buffer.size();
-     vector<short> temp;
      while(i < bufferSize){
-	  miniwave<short>* mw = new miniwave<short>;
-	  //	  if(negative)
-{
-	       while((tempTogether <= 0)&&(i<bufferSize)){
-		    mw->addSample(tempTogether);
-		    i+=2;
-		    tempTogether = *((short*)(&buffer[i]));
-	       }
-	       negative = false;
-	  }
-	  //	  else
-	       {
-	       while((tempTogether >= 0) && (i < bufferSize)){
-		    mw->addSample(tempTogether);
-		    i+=2;
-		    tempTogether = *((short*)(&buffer[i]));
-	       }
-	       negative = true;
-	  }
-	  vertices[mw->identify()].addMW(*mw);
-	  vertices[prevMW].addEdge(mw->identify());
-	  prevMW = mw->identify();
-	  delete mw;
+	  vertices[previous].addEdge(current);
+	  previous = current;
+	  i+=2;
+	  current = *((short*)(&buffer[i]));
      }
 }//end of markovAte
 
@@ -182,39 +161,20 @@ void wave::markovAte(){
 // in their natural state, change them to chars
 // when writing out.  Save a lot of this dickery.
 
-
 void wave::scramble(){
      buffer.clear();
      unsigned int bufferPlace = 0;
-     map<long, vertex<short> >::iterator it = vertices.begin();
-     long seed = it->first;
-
+     long seed = 0;
      while(bufferPlace < (dataLength)){
-	  //	  int temp1 = vertices[seed].miniwaves.size();
-	  
-	  int temp1 = vertices[seed].miniwaves.size();
-	  int miniWaveSeed = rand() % temp1;
-	  unsigned int tempSamplesSize = vertices[seed].miniwaves[miniWaveSeed].samples.size();
-	  for(unsigned int j = 0;j < tempSamplesSize; j++){
-	       char tempArr[2];
-	       short tempSample = vertices[seed].miniwaves[miniWaveSeed].samples[j];
-	       *((short*)(&tempArr[0])) = tempSample;
-
-	       buffer.push_back(tempArr[0]);
-	       buffer.push_back(tempArr[1]);
-	       
-	       bufferPlace += 2;
-	  }
-	  long temp = rand() % vertices[seed].edges.size();
-	  seed = vertices[seed].edges[temp].to;
-	  
-	  //	  seed = vertices[rand(vertices[seed].edges.size())]
+	  int edgeSize = vertices[seed].edges.size();
+	  int randomEdge = rand() % edgeSize;
+	  char tempArr[2];
+	  short tempSample = vertices[seed].edges[randomEdge].to;
+	  *((short*)(&tempArr[0])) = tempSample;
+	  buffer.push_back(tempArr[0]);
+	  buffer.push_back(tempArr[1]);
+	  bufferPlace += 2;
+	  seed = tempSample;
      }
      setDataLength();
-     /*
-      *((short*)(&tempArr[0])) = (short)temp;
-      buffer.push_back(tempArr[0]);
-      buffer.push_back(tempArr[1]);
-     */
-     // code to build new buffer from markov chain goes here.  
 }// end of scramble

@@ -11,5 +11,5 @@ int main()
 	mono1.print();
 	mono1.scramble();
 	mono1.print();
-	mono1.writeW("drumLoopScramble1.wav");
+	mono1.writeW("drumLoopScramble9_12.wav");
 }
