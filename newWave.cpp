@@ -145,14 +145,31 @@ void wave::print(){
 
 void wave::markovAte(){
      int i = 0;
-     short current = *((short*)(&buffer[i]));
-     long previous = 0;
      int bufferSize = buffer.size();
-     while(i < bufferSize){
-	  vertices[previous].addEdge(current);
-	  previous = current;
+     //     long previous = *((short*)(&buffer[i]));
+     //     i+=2;
+     //     short current = *((short*)(&buffer[i]));
+     union marU{
+	  char marChars[4];
+	  short sampleOne;
+	  short sampleTwo;
+	  long  marID;
+     };
+
+     marU marUnion;
+
+     while(i < bufferSize - 4){
+	  marUnion.marChars[0] = buffer[i];
+	  marUnion.marChars[1] = buffer[i+1];
+	  marUnion.marChars[2] = buffer[i+2];
+	  marUnion.marChars[3] = buffer[i+3];
+	  vertices[marUnion.marID].addEdge(*((short*)(&buffer[i+4])));
 	  i+=2;
-	  current = *((short*)(&buffer[i]));
+
+	  //	  vertices[previous].addEdge(current);
+	  //	  previous = current;
+	  //	  i+=2;
+	  //	  current = *((short*)(&buffer[i]));
      }
 }//end of markovAte
 

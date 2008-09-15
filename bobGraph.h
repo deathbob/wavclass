@@ -54,7 +54,13 @@ class vertex{
     }
   };
 
-  long ID;
+  union{
+    char unionChars[4];
+    short lowShort;
+    short highShort;
+    long VID;
+  };
+    long long ID;
   vector<bobEdge> edges;
 };
 

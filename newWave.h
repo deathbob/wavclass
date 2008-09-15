@@ -36,8 +36,8 @@ class wave
   //
   map<long, vertex<short> > vertices;
  private:
-  unsigned int dataLength;
-  unsigned int totalSize ;
+  unsigned long int dataLength;
+  unsigned long int totalSize ;
   unsigned int fmtSize;
   unsigned int compressionType;
   unsigned int channels;
