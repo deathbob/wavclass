@@ -4,8 +4,8 @@ using namespace std;
 
 union marU{
   unsigned char marChars[4];
-  signed short int samples[2];
-  unsigned long int marID;
+  short int samples[2];
+  long int marID;
   void printMarU(){
     cout<<"sampleOne "<<samples[0]<<endl
       <<"sampleTwo "<<samples[1]<<endl
@@ -25,7 +25,7 @@ class bobEdge{
     to = 0;
     weight = 0;
   };
-  bobEdge(long L, int W){
+  bobEdge(signed short L, int W){
     to = L;
     weight = W;
   };
@@ -37,7 +37,7 @@ class bobEdge{
     if(to == right.to)return true;
     else return false;
   };
-  long to;
+  signed short to;
   int weight;
 };
 
@@ -64,11 +64,11 @@ class vertex{
     edges = right.edges;
     vertexUnion.marID = right.vertexUnion.marID;
   };
-  void setID(unsigned long int xID){
+  void setID(long int xID){
     ID = xID;
     vertexUnion.marID = xID;
   }
-  void addEdge(long L ){
+  void addEdge(signed short L ){
     bobEdge newEdge(L, 1);
     //    vector<bobEdge>::iterator it = find(edges.begin(), edges.end(), newEdge);
     //    if(it == edges.end()){
@@ -80,7 +80,7 @@ class vertex{
   };
 
   marU vertexUnion;
-  unsigned long int ID;
+  long int ID;
   vector<bobEdge> edges;
 };
 

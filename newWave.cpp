@@ -132,7 +132,7 @@ void wave::print(){
      }
      cout<<"size of vertices "<<vertices.size()<<endl;
      cout<<"vertices with no edges"<<endl;
-     map<unsigned long int, vertex<short> >::iterator it;
+     map<long int, vertex<short> >::iterator it;
      for(it = vertices.begin();it != vertices.end();it++){
 	  //	  cout<<" ID "<<it->second.ID<<endl;
 	  //	  cout<<"  edges   "<<it->second.edges.size()<<endl;
@@ -150,15 +150,16 @@ void wave::markovAte(){
      int bufferSize = buffer.size();
      marU marUnion;
      while(i < bufferSize - 4){	 
-	  marUnion.marID = *((unsigned long int*)(&buffer[i]));
-	  //	  marUnion.printMarU();
+	  marUnion.marID = *(( long int*)(&buffer[i]));
 	  vertices[marUnion.marID].setID(marUnion.marID);
-	  vertices[marUnion.marID].addEdge(*((short*)(&buffer[i+4])));
+	   short tempS = *(( short*)(&buffer[i+4]));
+	  vertices[marUnion.marID].addEdge(tempS);
+	  secretMap[marUnion.samples[1]].push_back(tempS);
 	  i+=2;
      }
-     marUnion.marID = *((unsigned long int*)(&buffer[i]));
-     vertices[marUnion.marID].setID(marUnion.marID);
-     vertices[marUnion.marID].addEdge(0);
+     //     marUnion.marID = *(( long int*)(&buffer[i]));
+     //     vertices[marUnion.marID].setID(marUnion.marID);
+     //     vertices[marUnion.marID].addEdge(0);
 
 }//end of markovAte
 
@@ -170,33 +171,70 @@ void wave::markovAte(){
 void wave::scramble(){
      buffer.clear();
      unsigned int bufferPlace = 0;
-     map<unsigned long int, vertex<short> >::iterator it = vertices.begin();
-     unsigned long int currentVertex = it->second.ID;
-     //     cout<<it->second.ID<<" it->second.ID"<<endl;
-     //     cout<<it->first<<" it->first"<<endl;
+	  marU twerp;
+     map< long int, vertex<short> >::iterator it = vertices.begin();
+      long int currentVertex = it->second.ID;
      assert(it->second.ID == it->first);
+     	  twerp.marID = currentVertex;
      buffer.push_back(vertices[currentVertex].vertexUnion.marChars[0]);
      buffer.push_back(vertices[currentVertex].vertexUnion.marChars[1]);
      buffer.push_back(vertices[currentVertex].vertexUnion.marChars[2]);
      buffer.push_back(vertices[currentVertex].vertexUnion.marChars[3]);
      int edgeSize = vertices[currentVertex].edges.size();
      int randomEdge = rand() % edgeSize;
-     short tempSample = vertices[currentVertex].edges[randomEdge].to;
-     char tempArr[2];
+      short tempSample = vertices[currentVertex].edges[randomEdge].to;
+     unsigned char tempArr[2];
      *((short*)(&tempArr[0])) = tempSample;
      buffer.push_back(tempArr[0]);
      buffer.push_back(tempArr[1]);
      bufferPlace += 2;
+     //     short prevSampleOne = twerp.samples[0];
+     short prevSampleTwo = twerp.samples[1];
+     short prevTempSample = tempSample;
      while(bufferPlace < (dataLength - 4)){
-	  currentVertex = *((unsigned long int*)(&buffer[bufferPlace]));
+	  currentVertex = *(( long int*)(&buffer[bufferPlace]));
+
+	  twerp.marID = currentVertex;
+	  //	  cout<<"----------------"<<endl;
+	  //	  	  twerp.printMarU();
+	  
+	  if(!prevSampleTwo == twerp.samples[0]){
+	       cout<<"big fucking problem "<<endl;
+	       cout<<"prevSampleTwo   twerp.samples[0]"<<endl;
+	       cout<<prevSampleTwo<<" != "<<twerp.samples[0]<<endl;
+	       cout<<"bufferPlace "<<bufferPlace<<endl;
+	       break;
+	  }
+
+	  if(!prevTempSample == twerp.samples[1]){
+	       	       cout<<"big fucking problem "<<endl;
+	       cout<<"prevTempSample   twerp.samples[1]"<<endl;
+	       cout<<prevTempSample<<" != "<<twerp.samples[1]<<endl;
+	       cout<<"bufferPlace "<<bufferPlace<<endl;
+	       break;
+	  }
+
 	  it = vertices.find(currentVertex);
-	  edgeSize = vertices[currentVertex].edges.size();
-	  randomEdge = rand() % edgeSize;
-	  tempSample = vertices[currentVertex].edges[randomEdge].to;
+	  if(it == vertices.end()){
+	       edgeSize = secretMap[twerp.samples[1]].size();
+	       randomEdge = rand() % edgeSize;
+	       tempSample = secretMap[twerp.samples[1]][randomEdge];
+	  }
+	  else{
+	       edgeSize = vertices[currentVertex].edges.size();
+	       randomEdge = rand() % edgeSize;
+	       tempSample = vertices[currentVertex].edges[randomEdge].to;
+	  }
+
+
+	  //	  cout<<tempSample<<" TempSample"<<endl;
 	  *((short*)(&tempArr[0])) = tempSample;
+	  //	  cout<<(int)tempArr[0]<<" "<<(int)tempArr[1]<<endl;
 	  buffer.push_back(tempArr[0]);
 	  buffer.push_back(tempArr[1]);
 	  bufferPlace += 2;
+     prevSampleTwo = twerp.samples[1];
+     prevTempSample = tempSample;
      }
      setDataLength();
 }// end of scramble

@@ -5,7 +5,6 @@ using namespace std;
 int main()
 {
      	wave mono1("guitMono.wav");
-	//     wave mono2("snicker.wav");
 	mono1.markovAte();
 	mono1.print();
 	mono1.scramble();
