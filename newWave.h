@@ -34,7 +34,7 @@ class wave
   //  deque<short> buffer;
   // list pros and cons of using a string or a long as the key
   //
-  map<long, vertex<short> > vertices;
+  map<unsigned long int, vertex<short> > vertices;
  private:
   unsigned long int dataLength;
   unsigned long int totalSize ;
