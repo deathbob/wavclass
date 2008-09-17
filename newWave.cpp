@@ -42,8 +42,6 @@ wave::wave(){
 
 };  // End of wave::wave(){};
 
-
-
 wave::wave(string fileName){
      ifstream fileIn;
      fileIn.open(fileName.c_str(), ios::binary);
@@ -92,8 +90,8 @@ void wave::setDataLength(){
      if(dataLength != buffer.size()){
 	  cout<<"dataLength was wrong!"<<endl;
 	  dataLength = buffer.size(); 
-	  *((unsigned int*)(&header[4])) = dataLength + header.size() + infoBlock.size();
-	  *((unsigned int*)(&dataHead[4])) = dataLength + header.size() + infoBlock.size();
+	  *((unsigned int*)(&header[4])) = dataLength + 24 + 8 + infoBlock.size();
+	  *((unsigned int*)(&dataHead[4])) = dataLength + infoBlock.size();
      }
 };
 	  
@@ -185,6 +183,10 @@ void wave::scramble(){
 	  current = *((long*)(&buffer[bufferPlace]));
 	  //	  tempHandy.marID = current;
 	  edgeSize = markov[current].size();
+	  if(edgeSize < 1){
+	       cout<<bufferPlace<<"  bufferplace"<<endl;
+	       break;
+	  }
 	  randomEdge = rand() % edgeSize;
 	  nextSample = markov[current][randomEdge];
 	  *((short*)(&tempArr[0])) = nextSample;
