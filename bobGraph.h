@@ -2,19 +2,19 @@
 
 using namespace std;
 
-union marU{
-  unsigned char marChars[4];
+union handy{
+  unsigned char Chars[4];
   short int samples[2];
-  long int marID;
-  void printMarU(){
-    cout<<"sampleOne "<<samples[0]<<endl
-      <<"sampleTwo "<<samples[1]<<endl
-	<<"marID "<<marID<<endl
+  long int ID;
+  void print(){
+    cout<<"sampleZero "<<samples[0]<<endl
+      <<"sampleOne "<<samples[1]<<endl
+	<<"marID "<<ID<<endl
 	<<"marChars "
-	<<(int)marChars[0]<<" "
-	<<(int)marChars[1]<<" "
-	<<(int)marChars[2]<<" "
-	<<(int)marChars[3]<<endl;
+	<<(int)Chars[0]<<" "
+	<<(int)Chars[1]<<" "
+	<<(int)Chars[2]<<" "
+	<<(int)Chars[3]<<endl;
   }
 };
 
@@ -46,27 +46,27 @@ class vertex{
  public:
   vertex(){
     ID = 0;
-    vertexUnion.marID = 0;
+    vertexUnion.ID = 0;
   };
   vertex(const vertex& copy){
     ID = copy.ID;
     edges.clear();
     edges = copy.edges;
-    vertexUnion.marID = copy.vertexUnion.marID;
+    vertexUnion.ID = copy.vertexUnion.ID;
   };
-  vertex(const marU mu){
-    ID = mu.marID;
-    vertexUnion.marID = mu.marID;
+  vertex(const handy mu){
+    ID = mu.ID;
+    vertexUnion.ID = mu.ID;
   };
   void operator=(const vertex& right){
     ID = right.ID;
     edges.clear();
     edges = right.edges;
-    vertexUnion.marID = right.vertexUnion.marID;
+    vertexUnion.ID = right.vertexUnion.ID;
   };
   void setID(long int xID){
     ID = xID;
-    vertexUnion.marID = xID;
+    vertexUnion.ID = xID;
   }
   void addEdge(signed short L ){
     bobEdge newEdge(L, 1);
@@ -79,7 +79,7 @@ class vertex{
       //    }
   };
 
-  marU vertexUnion;
+  handy vertexUnion;
   long int ID;
   vector<bobEdge> edges;
 };

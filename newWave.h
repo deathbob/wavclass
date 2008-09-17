@@ -9,7 +9,6 @@
 #include <iterator>
 #include <algorithm>
 #include <cmath>
-#include <deque>
 #include <map>
 #include "miniwave.h"
 #include "bobGraph.h"
@@ -30,12 +29,13 @@ class wave
   vector<char> header;
   vector<char> dataHead;
   vector<char> infoBlock;
-  deque<unsigned char> buffer;
+  vector<unsigned char> buffer;
   //  deque<short> buffer;
   // list pros and cons of using a string or a long as the key
   //
+  map<long, vector<short> > markov;
   map< long int, vertex<short> > vertices;
-  map<short, vector<short> >secretMap;
+  map<short, vector<short> > secretMap;
  private:
   unsigned long int dataLength;
   unsigned long int totalSize ;

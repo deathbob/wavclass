@@ -148,93 +148,66 @@ void wave::print(){
 void wave::markovAte(){
      int i = 0;
      int bufferSize = buffer.size();
-     marU marUnion;
+     short tempShort = *((short*)(&buffer[i+4]));
+     long tempLong;
      while(i < bufferSize - 4){	 
-	  marUnion.marID = *(( long int*)(&buffer[i]));
-	  vertices[marUnion.marID].setID(marUnion.marID);
-	   short tempS = *(( short*)(&buffer[i+4]));
-	  vertices[marUnion.marID].addEdge(tempS);
-	  secretMap[marUnion.samples[1]].push_back(tempS);
+	  tempLong = *((long*)(&buffer[i]));
+	  tempShort = *((short*)(&buffer[i+4]));
+	  markov[tempLong].push_back(tempShort);
 	  i+=2;
      }
-     //     marUnion.marID = *(( long int*)(&buffer[i]));
-     //     vertices[marUnion.marID].setID(marUnion.marID);
-     //     vertices[marUnion.marID].addEdge(0);
-
+     tempLong = *((long*)(&buffer[i]));
+     i=0;
+     tempShort = *((short*)(&buffer[i]));
+     markov[tempLong].push_back(tempShort);
 }//end of markovAte
-
-// note to self
-// change it so that the numbers are stored in teh buffer
-// in their natural state, change them to chars
-// when writing out.  Save a lot of this dickery.
 
 void wave::scramble(){
      buffer.clear();
-     unsigned int bufferPlace = 0;
-	  marU twerp;
-     map< long int, vertex<short> >::iterator it = vertices.begin();
-      long int currentVertex = it->second.ID;
-     assert(it->second.ID == it->first);
-     	  twerp.marID = currentVertex;
-     buffer.push_back(vertices[currentVertex].vertexUnion.marChars[0]);
-     buffer.push_back(vertices[currentVertex].vertexUnion.marChars[1]);
-     buffer.push_back(vertices[currentVertex].vertexUnion.marChars[2]);
-     buffer.push_back(vertices[currentVertex].vertexUnion.marChars[3]);
-     int edgeSize = vertices[currentVertex].edges.size();
+     unsigned long bufferPlace = 0;
+     handy tempHandy;
+     map<long, vector<short> >::iterator it = markov.begin();
+     long current = it->first;
+     tempHandy.ID = current;
+     buffer.push_back(tempHandy.Chars[0]);
+     buffer.push_back(tempHandy.Chars[1]);
+     buffer.push_back(tempHandy.Chars[2]);
+     buffer.push_back(tempHandy.Chars[3]);
+     int edgeSize = markov[current].size();
      int randomEdge = rand() % edgeSize;
-      short tempSample = vertices[currentVertex].edges[randomEdge].to;
+     short nextSample = markov[current][randomEdge];
      unsigned char tempArr[2];
-     *((short*)(&tempArr[0])) = tempSample;
+     *((short*)(&tempArr[0])) = nextSample;
      buffer.push_back(tempArr[0]);
      buffer.push_back(tempArr[1]);
      bufferPlace += 2;
-     //     short prevSampleOne = twerp.samples[0];
-     short prevSampleTwo = twerp.samples[1];
-     short prevTempSample = tempSample;
      while(bufferPlace < (dataLength - 4)){
-	  currentVertex = *(( long int*)(&buffer[bufferPlace]));
-
-	  twerp.marID = currentVertex;
-	  //	  cout<<"----------------"<<endl;
-	  //	  	  twerp.printMarU();
-	  
-	  if(!prevSampleTwo == twerp.samples[0]){
-	       cout<<"big fucking problem "<<endl;
-	       cout<<"prevSampleTwo   twerp.samples[0]"<<endl;
-	       cout<<prevSampleTwo<<" != "<<twerp.samples[0]<<endl;
-	       cout<<"bufferPlace "<<bufferPlace<<endl;
-	       break;
-	  }
-
-	  if(!prevTempSample == twerp.samples[1]){
-	       	       cout<<"big fucking problem "<<endl;
-	       cout<<"prevTempSample   twerp.samples[1]"<<endl;
-	       cout<<prevTempSample<<" != "<<twerp.samples[1]<<endl;
-	       cout<<"bufferPlace "<<bufferPlace<<endl;
-	       break;
-	  }
-
-	  it = vertices.find(currentVertex);
-	  if(it == vertices.end()){
-	       edgeSize = secretMap[twerp.samples[1]].size();
-	       randomEdge = rand() % edgeSize;
-	       tempSample = secretMap[twerp.samples[1]][randomEdge];
-	  }
-	  else{
-	       edgeSize = vertices[currentVertex].edges.size();
-	       randomEdge = rand() % edgeSize;
-	       tempSample = vertices[currentVertex].edges[randomEdge].to;
-	  }
-
-
-	  //	  cout<<tempSample<<" TempSample"<<endl;
-	  *((short*)(&tempArr[0])) = tempSample;
-	  //	  cout<<(int)tempArr[0]<<" "<<(int)tempArr[1]<<endl;
+	  current = *((long*)(&buffer[bufferPlace]));
+	  //	  tempHandy.marID = current;
+	  edgeSize = markov[current].size();
+	  randomEdge = rand() % edgeSize;
+	  nextSample = markov[current][randomEdge];
+	  *((short*)(&tempArr[0])) = nextSample;
 	  buffer.push_back(tempArr[0]);
 	  buffer.push_back(tempArr[1]);
 	  bufferPlace += 2;
-     prevSampleTwo = twerp.samples[1];
-     prevTempSample = tempSample;
      }
      setDataLength();
 }// end of scramble
+
+/*
+
+	
+  cout<<"&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&"<<endl;
+  cout<<*((short*)(&buffer[bufferPlace+2]))<<endl;
+  cout<<nextSample<<" NextSample"<<endl;
+  cout<<(int)tempArr[0]<<"  "<<(int)tempArr[1]<<endl;
+  cout<<*((short*)(&tempArr[0]))<<endl;
+  cout<<current<<" current "<<endl;
+  cout<<bufferPlace<<" bufferPlace "<<endl;
+  cout<<randomEdge<<" randomEdge"<<endl;
+  tempHandy.printMarU();
+  cout<<"&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&"<<endl;
+
+
+*/
