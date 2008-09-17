@@ -2,7 +2,10 @@
 #include <algorithm>
 #include <map>
 #include <cassert>
+#include <ctime>
 using namespace std;
+
+typedef long long bobLong;
 
 wave::wave(){
      char tempHeader[36] = {
@@ -145,43 +148,46 @@ void wave::print(){
 
 void wave::markovAte(){
      int i = 0;
+     bobLong tempLong;
+     int subSize = sizeof(tempLong);
      int bufferSize = buffer.size();
-     short tempShort = *((short*)(&buffer[i+4]));
-     long tempLong;
-     while(i < bufferSize - 4){	 
-	  tempLong = *((long*)(&buffer[i]));
-	  tempShort = *((short*)(&buffer[i+4]));
+     short tempShort = *((short*)(&buffer[i+subSize]));
+     while(i < bufferSize - subSize){	 
+	  tempLong = *((bobLong*)(&buffer[i]));
+	  tempShort = *((short*)(&buffer[i+subSize]));
 	  markov[tempLong].push_back(tempShort);
 	  i+=2;
      }
-     tempLong = *((long*)(&buffer[i]));
+     tempLong = *((bobLong*)(&buffer[i]));
      i=0;
      tempShort = *((short*)(&buffer[i]));
      markov[tempLong].push_back(tempShort);
 }//end of markovAte
 
 void wave::scramble(){
+     srand(time(NULL));
      buffer.clear();
      unsigned long bufferPlace = 0;
      handy tempHandy;
-     map<long, vector<short> >::iterator it = markov.begin();
-     long current = it->first;
+     map<long long, vector<short> >::iterator it = markov.begin();
+     long long current = it->first;
      tempHandy.ID = current;
-     buffer.push_back(tempHandy.Chars[0]);
-     buffer.push_back(tempHandy.Chars[1]);
-     buffer.push_back(tempHandy.Chars[2]);
-     buffer.push_back(tempHandy.Chars[3]);
-     int edgeSize = markov[current].size();
-     int randomEdge = rand() % edgeSize;
-     short nextSample = markov[current][randomEdge];
+     for(int i = 0; i < 8; i++){
+	       buffer.push_back(tempHandy.Chars[i]);
+     }
+     int edgeSize;// = markov[current].size();
+     int randomEdge;// = rand() % edgeSize;
+     short nextSample;// = markov[current][randomEdge];
      unsigned char tempArr[2];
+     /*
      *((short*)(&tempArr[0])) = nextSample;
      buffer.push_back(tempArr[0]);
      buffer.push_back(tempArr[1]);
-     bufferPlace += 2;
-     while(bufferPlace < (dataLength - 4)){
-	  current = *((long*)(&buffer[bufferPlace]));
-	  //	  tempHandy.marID = current;
+     bufferPlace += 2; */
+     while(bufferPlace < (dataLength - sizeof(current))){
+	  current = *((long long*)(&buffer[bufferPlace]));
+	  tempHandy.ID = current;
+	  //	  tempHandy.print();
 	  edgeSize = markov[current].size();
 	  if(edgeSize < 1){
 	       cout<<bufferPlace<<"  bufferplace"<<endl;
@@ -191,6 +197,7 @@ void wave::scramble(){
 	  nextSample = markov[current][randomEdge];
 	  *((short*)(&tempArr[0])) = nextSample;
 	  buffer.push_back(tempArr[0]);
+	  //	  cout<<(int)tempArr[0]<<" "<<(int)tempArr[1]<<endl;
 	  buffer.push_back(tempArr[1]);
 	  bufferPlace += 2;
      }

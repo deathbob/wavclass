@@ -33,7 +33,7 @@ class wave
   //  deque<short> buffer;
   // list pros and cons of using a string or a long as the key
   //
-  map<long, vector<short> > markov;
+  map<long long, vector<short> > markov;
   map< long int, vertex<short> > vertices;
   map<short, vector<short> > secretMap;
  private:
