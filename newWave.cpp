@@ -92,6 +92,7 @@ void wave::setDataLength(float length){
 void wave::setDataLength(){
      if(dataLength != buffer.size()){
 	  cout<<"dataLength was wrong!"<<endl;
+	  cout<<"expected "<<dataLength<< " got "<<buffer.size()<<endl;
 	  dataLength = buffer.size(); 
 	  *((unsigned int*)(&header[4])) = dataLength + 24 + 8 + infoBlock.size();
 	  *((unsigned int*)(&dataHead[4])) = dataLength + infoBlock.size();
@@ -151,21 +152,56 @@ void wave::markovAte(){
      bobLong tempLong;
      int subSize = sizeof(tempLong);
      int bufferSize = buffer.size();
-     short tempShort = *((short*)(&buffer[i+subSize]));
+     short tempShort = 0;//*((short*)(&buffer[i+subSize]));
      while(i < bufferSize - subSize){	 
 	  tempLong = *((bobLong*)(&buffer[i]));
 	  tempShort = *((short*)(&buffer[i+subSize]));
 	  markov[tempLong].push_back(tempShort);
 	  i+=2;
      }
+     /*
      tempLong = *((bobLong*)(&buffer[i]));
      i=0;
      tempShort = *((short*)(&buffer[i]));
      markov[tempLong].push_back(tempShort);
+     */
+     //     cout<<i <<" i "<< " bufferSize "<<buffer.size()<<endl;
+     char zap[16];
+     long j = 0;
+     while(i < bufferSize){
+       zap[j] = buffer[i];
+       j++;
+       i++;
+     }
+     //     cout<< i <<" i "<< " buffer.size() "<<buffer.size()<<endl;
+     i = 0;
+     while(i < 8 ){
+       zap[j] = buffer[i];
+       j++;
+       i++;
+     }
+     i = 0;
+     int counterB = 0;
+     while(i < 8 ){
+       counterB++;
+       tempLong = *((bobLong*)(&zap[i]));
+       tempShort = *((short*)(&zap[i+subSize]));
+       markov[tempLong].push_back(tempShort);
+       i+=2;
+       //       cout<<counterB<<" counterB "<<endl;
+     }
+
+     //          for(int j = 0; j < 8;j++){
+     //     tempLong = *((bobLong*)(&zap[0]));
+     //     tempShort = *((short*)(&zap[4]));
+     //     markov[tempLong].push_back(tempShort);
+
+
 }//end of markovAte
 
 void wave::scramble(){
-     srand(time(NULL));
+  //uncomment to seed rand with the current time
+  //     srand(time(NULL));  
      buffer.clear();
      unsigned long bufferPlace = 0;
      handy tempHandy;
