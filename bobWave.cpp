@@ -4,16 +4,19 @@ using namespace std;
 
 int main()
 {
-    //     cout<<sizeof(long long)<<endl;
-    //     wave mono1("guitMono.wav");
-    //     wave mono1("amenbreaking.wav");
-    wave mono1("amendeeptouch.wav");
-    //  wave mono1("Abstract05.wav");
-    //  wave mono1("chemical_135.wav");
-    //  wave mono1("electroclash_klantz_133.wav"); 
-    //  wave mono1("genesis.wav");
+    //    wave mono1("guitMono.wav");
+    //        wave stereoB("amenbreaking.wav");
+    //        wave monoB("amenbreaking_mono.wav");
+        wave mono1("amenupdown.wav");
+	//        wave stereoDT("amendeeptouch.wav");
+	//        wave stereoAB05("Abstract05.wav");
+	//        wave stereoChem("chemical_135.wav");
+	//        wave stereoDance("dance.wav");
+	//    wave stereoElectro("electroclash_klantz_133_1.wav"); 
+    //    wave stereoNord("nordic_1.wav");
+    //    wave stereoMid("midnight_1.wav");
+	//	mono1 += monoB;
     mono1.markovAte();
     mono1.scramble();
-    mono1.writeW("amenDP-1scramble9-29-1.wav");
-
+    mono1.writeW("UDlong_scramble9-29.wav");
 }

@@ -26,14 +26,16 @@ class wave
   void print();
   void markovAte();
   void scramble();
-  void operator+(const wave& right);
+  void operator+=(const wave& right);
+  wave operator=(const wave& right);
+
+ private:
   vector<char> header;
   vector<char> dataHead;
   vector<char> infoBlock;
   vector<unsigned char> buffer;
   map<long long, vector<short> > markov;
 
- private:
   unsigned long int dataLength;
   unsigned long int totalSize ;
   unsigned int fmtSize;

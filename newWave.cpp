@@ -179,7 +179,7 @@ void wave::markovAte(){
 // and build new .wav from it.  
 void wave::scramble(){
     //uncomment to seed rand with the current time
-    srand(time(NULL));  
+    srand(time(NULL));
     buffer.clear();
     unsigned long bufferPlace = 0;
     handy tempHandy;
@@ -194,7 +194,7 @@ void wave::scramble(){
     short nextSample;
     unsigned char tempArr[2];
     unsigned long amountToMake = dataLength - sizeof(current);
-    amountToMake = amountToMake * 2;
+    amountToMake = amountToMake * 6;
      
     while(bufferPlace < amountToMake){ 
 	current = *((long long*)(&buffer[bufferPlace]));
@@ -215,10 +215,37 @@ void wave::scramble(){
 }// end of scramble
 
 
-void wave::operator+(const wave& right){
-    unsigned long rightSize = right.buffer.size();
-    for(unsigned long i = 0; i < rightSize; i++){
-	buffer.push_back(right.buffer[i]);
+void wave::operator+=(const wave& right){
+    bool chanEq = channels == right.channels;
+    bool bytePS = bytesPerSec == right.bytesPerSec;
+
+    if (chanEq && bytePS){
+	unsigned long rightSize = right.buffer.size();
+	for(unsigned long i = 0; i < rightSize; i++){
+	    buffer.push_back(right.buffer[i]);
+	}
     }
+    else{cout<<"fuck"<<endl;}
     setDataLength();
 }
+
+wave wave::operator=(const wave& right){
+    wave retWave;
+    retWave.header = right.header;
+    retWave.dataHead = right.dataHead;
+    retWave.infoBlock = right.infoBlock;
+    retWave.buffer = right.buffer;
+    retWave.markov = right.markov;
+    
+    retWave.dataLength = right.dataLength;
+    retWave.totalSize = right.totalSize;
+    retWave.fmtSize = right.fmtSize;
+    retWave.compressionType = right.compressionType;
+    retWave.channels = right.channels;
+    retWave.sampleRate = right.sampleRate;
+    retWave.bytesPerSec = right.bytesPerSec;
+    retWave.byteDepth = right.byteDepth;
+    retWave.bitDepth = right.bitDepth;
+    return retWave;
+}
+    
