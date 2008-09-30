@@ -26,6 +26,7 @@ class wave
   void print();
   void markovAte();
   void scramble();
+  void operator+(const wave& right);
   vector<char> header;
   vector<char> dataHead;
   vector<char> infoBlock;
