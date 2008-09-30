@@ -42,7 +42,6 @@ wave::wave(){
     for (int i = 0; i < 12; i++){
 	infoBlock.push_back(tempInfoBlock[i]);
     }
-
 };  // End of wave::wave(){};
 
 wave::wave(string fileName){
@@ -89,6 +88,9 @@ void wave::setDataLength(float length){
     *((unsigned int*)(&dataHead[4])) = dataLength;
 };
 
+// .wav must have correct length to play.  
+// This checks the size of everything that will be written out 
+// and sets .wav length accordingly.
 void wave::setDataLength(){
     if(dataLength != buffer.size()){
 	cout<<"dataLength was wrong!"<<endl;
@@ -99,7 +101,6 @@ void wave::setDataLength(){
     }
 };
 	  
-
 void wave::writeW(string fileName){
     if(dataLength != buffer.size()){
 	setDataLength();
@@ -113,7 +114,7 @@ void wave::writeW(string fileName){
     fileOut.close();
 };
 
-
+// for debugging.  
 void wave::print(){
     cout<<"dataLength "<<dataLength<<endl;
     cout<<"buffer.size() "<<buffer.size()<<endl;
@@ -130,17 +131,10 @@ void wave::print(){
     for (unsigned int i = 0; i < infoBlock.size(); i++)    {
 	cout<<setw(7)<<infoBlock[i]<<setw(7)<<(int)infoBlock[i]<<endl;
     }
-    cout<<"size of vertices "<<vertices.size()<<endl;
-    cout<<"vertices with no edges"<<endl;
-    map<long int, vertex<short> >::iterator it;
-    for(it = vertices.begin();it != vertices.end();it++){
-	if(it->second.edges.size() == 0){
-	    cout<<"Problem!  "<<it->first<<endl;
-	}
-    }
 }
 
-
+// create a markov chain from .wav data block.
+// memory intensive naive implementation.  
 void wave::markovAte(){
     int i = 0;
     bobLong tempLong;
@@ -153,6 +147,9 @@ void wave::markovAte(){
 	markov[tempLong].push_back(tempShort);
 	i+=2;
     }
+
+    // little bit of housekeeping to link the end of the .wav data
+    // with the beginning.  
     char zap[16];
     long j = 0;
     while(i < bufferSize){
@@ -177,6 +174,9 @@ void wave::markovAte(){
     }
 }//end of markovAte
 
+
+// select the first link in the markov chain
+// and build new .wav from it.  
 void wave::scramble(){
     //uncomment to seed rand with the current time
     srand(time(NULL));  
